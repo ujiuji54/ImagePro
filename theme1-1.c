@@ -7,7 +7,7 @@
 
 #define Isize  512	//取り扱う画像のサイズX
 #define Jsize  Isize	//取り扱う画像のサイズY
-#define Bnum   6 	//ボタンの数
+#define Bnum   7 	//ボタンの数
 #define Xsize  Jsize*2+Right+5	//表示ウィンドウのサイズX
 #define Ysize  Isize+5	//表示ウインドウのサイズY
 #define Right  100	//表示ウィンドウ内の右側スペースサイズ
@@ -138,6 +138,29 @@ void change_step(unsigned char dat[Isize][Jsize]){
 	view_imgW2(dat1);//右側ウィンドウに画像を表示する関数を呼び出し
 }
 
+void noudo_henkan(unsigned char dat[Isize][Jsize]){
+	int i,j;
+	unsigned char max, min, dat2[Isize][Jsize];
+
+	max = min = dat[0][0];
+	for(i = 0; i<Isize; i++){
+		for(j=0; j<Jsize; j++){
+			if(dat[i][j]>max)max = dat[i][j];
+			if(dat[i][j]<min)min = dat[i][j];
+		}
+	}
+	for(i = 0; i<Isize; i++){
+		for(j=0; j<Jsize; j++){
+			if(dat[i][j]<min) dat2[i][j]=0;
+			else if(dat[i][j]>max) dat2[i][j]=255;
+			else{
+				dat2[i][j]=(unsigned char)((dat[i][j]-min)*255.0/(max-min));
+			}
+		}
+	}	
+	view_imgW2(dat2);
+}
+
 //windowの初期設定
 void init_window()
 {
@@ -211,6 +234,8 @@ void event_select()
 				XDrawImageString(d,Bt[1],Gc,28,21,"ViewW1",6);
 				XDrawImageString(d,Bt[2],Gc,28,21,"ViewW2",6);
 				XDrawImageString(d,Bt[3],Gc,28,21,"Save",4);
+				XDrawImageString(d,Bt[4],Gc,28,21,"step",4);
+				XDrawImageString(d,Bt[5],Gc,28,21,"noudo",5);
 				XDrawImageString(d,Bt[Bnum-1],Gc,28,21,"Quit",4);
 			break;
 			//ボタンが押された場合
@@ -229,6 +254,9 @@ void event_select()
                 }
 				if(Ev.xany.window == Bt[4]){
 					change_step(dat);        
+                }
+				if(Ev.xany.window == Bt[5]){
+					noudo_henkan(dat);        
                 }
 				if(Ev.xany.window == Bt[Bnum-1]){
 					exit(1);
