@@ -7,7 +7,7 @@
 
 #define Isize  512	//取り扱う画像のサイズX
 #define Jsize  Isize	//取り扱う画像のサイズY
-#define Bnum   8 	//ボタンの数
+#define Bnum   9 	//ボタンの数
 #define Xsize  Jsize*2+Right+5	//表示ウィンドウのサイズX
 #define Ysize  Isize+5	//表示ウインドウのサイズY
 #define Right  100	//表示ウィンドウ内の右側スペースサイズ
@@ -184,6 +184,19 @@ void noudo_henkan2(unsigned char dat[Isize][Jsize]){
 	view_imgW2(dat2);
 }
 
+void histgram(unsigned char dat[Isize][Jsize]){
+	const int LEVEL = 255;
+	int i,j,hist[LEVEL];
+
+	for (i = 0;i < LEVEL;i++)hist[i]=0;
+	for(i = 0; i<Isize; i++){
+		for(j=0; j<Jsize; j++){
+			hist[dat[i][j]-'0']++;
+		}
+	}
+	for (i = 0;i < LEVEL;i++)printf("%d : %d\n",i,hist[i]);
+}
+
 //windowの初期設定
 void init_window()
 {
@@ -260,6 +273,7 @@ void event_select()
 				XDrawImageString(d,Bt[4],Gc,28,21,"step",4);
 				XDrawImageString(d,Bt[5],Gc,28,21,"noudo",5);
 				XDrawImageString(d,Bt[6],Gc,28,21,"noudo2",6);
+				XDrawImageString(d,Bt[7],Gc,28,21,"histgram",8);
 				XDrawImageString(d,Bt[Bnum-1],Gc,28,21,"Quit",4);
 			break;
 			//ボタンが押された場合
@@ -284,6 +298,9 @@ void event_select()
                 }
 				if(Ev.xany.window == Bt[6]){
 					noudo_henkan2(dat);        
+                }
+				if(Ev.xany.window == Bt[7]){
+					histgram(dat);        
                 }
 				if(Ev.xany.window == Bt[Bnum-1]){
 					exit(1);
