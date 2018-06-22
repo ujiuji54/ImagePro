@@ -7,7 +7,7 @@
 
 #define Isize  512	//取り扱う画像のサイズX
 #define Jsize  Isize	//取り扱う画像のサイズY
-#define Bnum   9 	//ボタンの数
+#define Bnum   11 	//ボタンの数
 #define Xsize  Jsize*2+Right+5	//表示ウィンドウのサイズX
 #define Ysize  Isize+5	//表示ウインドウのサイズY
 #define Right  100	//表示ウィンドウ内の右側スペースサイズ
@@ -197,6 +197,85 @@ void histgram(unsigned char dat[Isize][Jsize]){
 	for (i = 0;i < LEVEL;i++)printf("%d : %d\n",i,hist[i]);
 }
 
+void filter_operation(unsigned char dat[Isize][Jsize])
+{
+    int i,j,k,l,c,m,n,max,min;
+    short int fdat[Isize][Jsize];
+    unsigned char dat4[Isize][Jsize];
+    int f[3][3]={{0,-1,0},
+	    	 {-1,5,-1},
+		 {0,-1,0}};
+
+    for(i=0;i<Isize;i++){
+        for(j=0;j<Jsize;j++){
+            fdat[i][j]=0;
+        }
+    }
+    for(i=1;i<Isize;i++){
+	for(j=1;j<Jsize;j++){
+	    for(k=-1;k<=1;k++){
+		for(l=-1;l<=1;l++){
+		    fdat[i][j]+=dat[i+k][j+l]*f[k+1][l+1];
+		}
+	    }
+	}
+    }
+    max=min=fdat[1][1];
+    for(i=1;i<Isize-1;i++){
+        for(j=1;j<Jsize-1;j++){
+            if(fdat[i][j]>max) max=fdat[i][j];
+            if(fdat[i][j]<min) min=fdat[i][j];
+        }
+    }
+    for(i=0;i<Isize;i++){
+        for(j=0;j<Jsize;j++){
+            if(fdat[i][j]<min) dat4[i][j]=0;
+            else if(fdat[i][j]>max) dat4[i][j]=255;
+            else{
+                dat4[i][j]=(unsigned char)
+                   ((fdat[i][j]-min)*255./(float)(max-min));
+            }
+        }
+    }
+    view_imgW2(dat4);
+}
+
+unsigned char sort(unsigned char dat[Isize][Jsize],int a, int b)
+{
+    int i,j,k;
+    unsigned char c[9],buf;
+
+    k=0;
+    for(i=a-1;i<=a+1;i++){
+        for(j=b-1;j<=b+1;j++){
+            c[k]=dat[i][j];
+            k++;
+        }
+    }
+    for(j=0;j<9;j++){
+        for(i=0;i<8;i++){
+            if(c[i] > c[i+1]){
+                buf=c[i];
+		c[i]=c[i+1];
+		c[i+1]=buf;
+            }
+        }
+    }
+    return c[4];
+}
+
+void median_filter(unsigned char dat[Isize][Jsize])
+{
+    int i,j;
+    unsigned char dat5[Isize][Jsize],sort();
+    for(i=1;i<Isize-1;i++){
+        for(j=1;j<Jsize-1;j++){
+            dat5[i][j]=sort(dat,i,j);
+        }
+    }
+    view_imgW2(dat5);
+}
+
 //windowの初期設定
 void init_window()
 {
@@ -274,6 +353,8 @@ void event_select()
 				XDrawImageString(d,Bt[5],Gc,28,21,"noudo",5);
 				XDrawImageString(d,Bt[6],Gc,28,21,"noudo2",6);
 				XDrawImageString(d,Bt[7],Gc,28,21,"histgram",8);
+				XDrawImageString(d,Bt[8],Gc,28,21,"filter",6);
+				XDrawImageString(d,Bt[9],Gc,28,21,"median",6);
 				XDrawImageString(d,Bt[Bnum-1],Gc,28,21,"Quit",4);
 			break;
 			//ボタンが押された場合
@@ -301,6 +382,12 @@ void event_select()
                 }
 				if(Ev.xany.window == Bt[7]){
 					histgram(dat);        
+                }
+				if(Ev.xany.window == Bt[8]){
+					filter_operation(dat);
+                }
+				if(Ev.xany.window == Bt[9]){
+					median_filter(dat);
                 }
 				if(Ev.xany.window == Bt[Bnum-1]){
 					exit(1);
