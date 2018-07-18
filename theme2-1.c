@@ -7,7 +7,7 @@
 
 #define Isize  512	//取り扱う画像のサイズX
 #define Jsize  Isize	//取り扱う画像のサイズY
-#define Bnum   7 	//ボタンの数
+#define Bnum   10 	//ボタンの数
 #define Xsize  Jsize*2+Right+5	//表示ウィンドウのサイズX
 #define Ysize  Isize+5	//表示ウインドウのサイズY
 #define Right  100	//表示ウィンドウ内の右側スペースサイズ
@@ -188,6 +188,72 @@ void p_tail(){
     printf("p_tail threshold: %d\n",t);
     binarization(t);
 }
+/*
+void hanbetubunseki(){
+    int i,j,k,t,s1,s2,w1,w2;
+    float M1,M2,Mt;
+    double sigma2,max_sigma;
+
+    max_sigma=0.;
+    for(k=0;i<Isize;i++){
+        w1=w2=s1=s2=0;
+        for(j=0;j<Jsize;j++){
+            if(image[i][j]<k){
+
+            }else{
+
+            }
+        }
+    }
+    M1=;
+    M2=;
+
+    w1=w1/1000.0;
+    w2=w2/1000.0;
+
+    sigma2= ;
+    if(sigma2>max_sigma){
+        ;
+        t=;
+    }
+    print("hanbetubunseki threshold: %d\n",t);
+    binarization(t);
+}
+
+void
+expantion()    //拡大
+{
+    int i,j,k;
+    for(i=1;i<Isize-1;i++){
+        for(j=1;j<Jsize-1;j++){
+            if(bin[i][j]==     ){         //とりあえず4近傍
+                if(bin[i-1][j  ]==      ||
+                   bin[   ][   ]==       ||
+                   bin[   ][   ]==       ||
+                   bin[   ][   ]==     ){
+                    bin[i][j]=200;
+                }
+            }
+        }
+    }
+    for(i=1;i<Isize-1;i++){
+        for(j=1;j<Jsize-1;j++){
+            if(                ){
+                bin[i][j]=255;
+            }
+        }
+    }
+    view_imgW2(bin);
+}
+
+void
+contraction()     //縮小
+{
+          :
+          :
+          :
+}
+*/
 
 //windowの初期設定
 void init_window()
@@ -264,6 +330,9 @@ void event_select()
 				XDrawImageString(d,Bt[3],Gc,28,21,"Save",4);
 				XDrawImageString(d,Bt[4],Gc,28,21,"binary",6);
 				XDrawImageString(d,Bt[5],Gc,28,21,"p_tail",6);
+				XDrawImageString(d,Bt[6],Gc,28,21,"hanbetu",7);
+				XDrawImageString(d,Bt[7],Gc,28,21,"resize",6);
+				XDrawImageString(d,Bt[8],Gc,28,21,"saisen",6);
 				XDrawImageString(d,Bt[Bnum-1],Gc,28,21,"Quit",4);
 			break;
 			case ButtonPress :
@@ -290,7 +359,15 @@ void event_select()
 				}
 				if(Ev.xany.window == Bt[5]){
 					p_tail();
-                    view_imgW2(dat);
+				}
+				if(Ev.xany.window == Bt[6]){
+					//hanbetubunseki();
+				}
+                if(Ev.xany.window == Bt[7]){
+					//expantion();
+				}
+                if(Ev.xany.window == Bt[8]){
+					//saisen();
 				}
 				if(Ev.xany.window == Bt[Bnum-1]){
 					exit(1);
