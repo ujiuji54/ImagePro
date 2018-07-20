@@ -250,8 +250,7 @@ void expantion()    //³ÈÂç
     view_imgW2(bin);
 }
 
-void
-contraction()     //½Ì¾®
+void contraction()     //½Ì¾®
 {
     int i,j,k;
     for(i=1;i<Isize-1;i++){
