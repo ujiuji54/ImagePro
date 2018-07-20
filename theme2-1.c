@@ -188,38 +188,44 @@ void p_tail(){
     printf("p_tail threshold: %d\n",t);
     binarization(t);
 }
-/*
+
 void hanbetubunseki(){
-    int i,j,k,t,s1,s2,w1,w2;
-    float M1,M2,Mt;
+    int i,j,k,t;
+    float s1,s2,w1,w2,M1,M2;
     double sigma2,max_sigma;
 
     max_sigma=0.;
-    for(k=0;i<Isize;i++){
+    for(k=0;k<254;k++){
         w1=w2=s1=s2=0;
-        for(j=0;j<Jsize;j++){
-            if(image[i][j]<k){
-
-            }else{
-
+        for(i=0;i<Isize;i++){
+            for(j=0;j<Jsize;j++){
+                if(image[i][j]<k){
+                    w1++;
+                    s1+=image[i][j];
+                }else{
+                    w2++;
+                    s2+=image[i][j];
+                }
             }
         }
-    }
-    M1=;
-    M2=;
 
-    w1=w1/1000.0;
-    w2=w2/1000.0;
+        M1=s1/w1;
+        M2=s2/w2;
 
-    sigma2= ;
-    if(sigma2>max_sigma){
-        ;
-        t=;
+        w1=w1/1000.0;
+        w2=w2/1000.0;
+
+        sigma2= w1*w2/pow(w1+w2,2)*pow(M1-M2,2);
+        if(sigma2>max_sigma){
+            max_sigma=sigma2;
+            t=k;
+        }
     }
-    print("hanbetubunseki threshold: %d\n",t);
+    printf("hanbetubunseki threshold: %d\n",t);
     binarization(t);
 }
 
+/*
 void
 expantion()    //³ÈÂç
 {
@@ -361,7 +367,7 @@ void event_select()
 					p_tail();
 				}
 				if(Ev.xany.window == Bt[6]){
-					//hanbetubunseki();
+					hanbetubunseki();
 				}
                 if(Ev.xany.window == Bt[7]){
 					//expantion();
