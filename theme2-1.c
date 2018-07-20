@@ -7,7 +7,7 @@
 
 #define Isize  512	//取り扱う画像のサイズX
 #define Jsize  Isize	//取り扱う画像のサイズY
-#define Bnum   10 	//ボタンの数
+#define Bnum   11 	//ボタンの数
 #define Xsize  Jsize*2+Right+5	//表示ウィンドウのサイズX
 #define Ysize  Isize+5	//表示ウインドウのサイズY
 #define Right  100	//表示ウィンドウ内の右側スペースサイズ
@@ -215,7 +215,7 @@ void hanbetubunseki(){
         w1=w1/1000.0;
         w2=w2/1000.0;
 
-        sigma2= w1*w2/pow(w1+w2,2)*pow(M1-M2,2);
+        sigma2= w1*w2*pow(M1-M2,2)/pow(w1+w2,2);
         if(sigma2>max_sigma){
             max_sigma=sigma2;
             t=k;
@@ -225,18 +225,16 @@ void hanbetubunseki(){
     binarization(t);
 }
 
-/*
-void
-expantion()    //拡大
+void expantion()    //拡大
 {
     int i,j,k;
     for(i=1;i<Isize-1;i++){
         for(j=1;j<Jsize-1;j++){
-            if(bin[i][j]==     ){         //とりあえず4近傍
-                if(bin[i-1][j  ]==      ||
-                   bin[   ][   ]==       ||
-                   bin[   ][   ]==       ||
-                   bin[   ][   ]==     ){
+            if(bin[i][j]== 0 ){         //とりあえず4近傍
+                if(bin[i-1][j]== 255  ||
+                   bin[i][j-1]== 255  ||
+                   bin[i+1][j]== 255 ||
+                   bin[i][j+1]==255 ){
                     bin[i][j]=200;
                 }
             }
@@ -244,7 +242,7 @@ expantion()    //拡大
     }
     for(i=1;i<Isize-1;i++){
         for(j=1;j<Jsize-1;j++){
-            if(                ){
+            if( bin[i][j]==200 ){
                 bin[i][j]=255;
             }
         }
@@ -255,11 +253,28 @@ expantion()    //拡大
 void
 contraction()     //縮小
 {
-          :
-          :
-          :
+    int i,j,k;
+    for(i=1;i<Isize-1;i++){
+        for(j=1;j<Jsize-1;j++){
+            if(bin[i][j]== 255 ){         //とりあえず4近傍
+                if(bin[i-1][j]== 0  ||
+                   bin[i][j-1]== 0  ||
+                   bin[i+1][j]== 0 ||
+                   bin[i][j+1]== 0){
+                    bin[i][j]=200;
+                }
+            }
+        }
+    }
+    for(i=1;i<Isize-1;i++){
+        for(j=1;j<Jsize-1;j++){
+            if( bin[i][j]==200 ){
+                bin[i][j]=0;
+            }
+        }
+    }
+    view_imgW2(bin);
 }
-*/
 
 //windowの初期設定
 void init_window()
@@ -337,8 +352,9 @@ void event_select()
 				XDrawImageString(d,Bt[4],Gc,28,21,"binary",6);
 				XDrawImageString(d,Bt[5],Gc,28,21,"p_tail",6);
 				XDrawImageString(d,Bt[6],Gc,28,21,"hanbetu",7);
-				XDrawImageString(d,Bt[7],Gc,28,21,"resize",6);
-				XDrawImageString(d,Bt[8],Gc,28,21,"saisen",6);
+				XDrawImageString(d,Bt[7],Gc,28,21,"kakudai",7);
+				XDrawImageString(d,Bt[8],Gc,28,21,"syukusyo",8);
+				XDrawImageString(d,Bt[9],Gc,28,21,"saisen",6);
 				XDrawImageString(d,Bt[Bnum-1],Gc,28,21,"Quit",4);
 			break;
 			case ButtonPress :
@@ -370,9 +386,12 @@ void event_select()
 					hanbetubunseki();
 				}
                 if(Ev.xany.window == Bt[7]){
-					//expantion();
+					expantion();
 				}
                 if(Ev.xany.window == Bt[8]){
+					contraction();
+				}
+                if(Ev.xany.window == Bt[9]){
 					//saisen();
 				}
 				if(Ev.xany.window == Bt[Bnum-1]){
