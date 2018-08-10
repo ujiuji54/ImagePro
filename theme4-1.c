@@ -185,7 +185,43 @@ void e_distance()
  //相関係数を求める
 void relation()
 {
+    int i,j,k,l,fsum,gsum,sj,syori,n;
+    float fava,gava,c1,c2,c3,zncc,ZNCC;
 
+    ZNCC=0;
+    n=0;
+    
+    syori=(Isize-TI-1) * (Jsize-TJ-1)/100;
+
+    for(i=0; i<Isize-TI-1; i++){
+        for(j=0; j<Jsize-TJ-1; j++){
+            zncc=0;
+            fsum=0;
+            gsum=0;
+            c1=0,c2=0,c3=0;
+            for(k=0; k<TI; k++){
+                for(l=0; l<TJ; l++){
+                    fsum += dat[i+k][j+l];
+                    gsum += template[k][l];
+                }
+            }
+            fava=fsum/(TI*TJ);
+            gava=gsum/(TI*TJ);
+    
+            for(k=0; k<TI; k++){
+                for(l=0; l<TJ; l++){
+                   c1+=(dat[i+k][j+l]-fava)*(template[k][l]-gava);
+                   c2+=pow(dat[i+k][j+l]-fava,2);
+                   c3+=pow(template[k][l]-gava,2);
+                }
+            }
+            zncc=c1/(sqrt(c2)*sqrt(c3));
+            if(zncc>ZNCC)ZNCC=zncc;
+            if(n%syori==0)printf("%d％終了\n",n/syori);
+            n++;
+        }
+    }
+    printf("相関係数 %f\n",ZNCC);
 }
 
 //windowの初期設定
